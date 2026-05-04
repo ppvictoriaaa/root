@@ -11,25 +11,22 @@ import {
 import { HttpService } from '@nestjs/axios';
 import { firstValueFrom } from 'rxjs';
 import { AxiosError } from 'axios';
-import { Request } from 'express';
 import { JwtAuthGuard } from '../guards/jwt-auth.guard';
+import type { DeleteResult, RequestWithUser, UserProfile } from './users.types';
 
-interface RequestWithUser extends Request {
-  user: { userId: string; email: string };
-}
+const USER_SERVICE_URL = 'http://localhost:3002/users/profile';
 
-@UseGuards(JwtAuthGuard)  // всі маршрути тут вимагають токен
+@UseGuards(JwtAuthGuard)
 @Controller('users')
 export class UsersController {
   constructor(private readonly httpService: HttpService) {}
 
   @Get('profile')
-  async getProfile(@Req() req: RequestWithUser) {
+  async getProfile(@Req() req: RequestWithUser): Promise<UserProfile> {
     try {
       const response = await firstValueFrom(
-        this.httpService.get('http://localhost:3002/users/profile', {
+        this.httpService.get<UserProfile>(USER_SERVICE_URL, {
           headers: { 'x-user-id': req.user.userId },
-          // передаємо userId через заголовок — User Service не перевіряє токен сам
         }),
       );
       return response.data;
@@ -46,10 +43,10 @@ export class UsersController {
   async updateProfile(
     @Req() req: RequestWithUser,
     @Body() body: Record<string, unknown>,
-  ) {
+  ): Promise<UserProfile> {
     try {
       const response = await firstValueFrom(
-        this.httpService.patch('http://localhost:3002/users/profile', body, {
+        this.httpService.patch<UserProfile>(USER_SERVICE_URL, body, {
           headers: { 'x-user-id': req.user.userId },
         }),
       );
@@ -64,10 +61,10 @@ export class UsersController {
   }
 
   @Delete('profile')
-  async deleteProfile(@Req() req: RequestWithUser) {
+  async deleteProfile(@Req() req: RequestWithUser): Promise<DeleteResult> {
     try {
       const response = await firstValueFrom(
-        this.httpService.delete('http://localhost:3002/users/profile', {
+        this.httpService.delete<DeleteResult>(USER_SERVICE_URL, {
           headers: { 'x-user-id': req.user.userId },
         }),
       );

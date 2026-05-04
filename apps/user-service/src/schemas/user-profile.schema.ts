@@ -6,16 +6,16 @@ export type UserProfileDocument = UserProfile & Document;
 @Schema({ timestamps: true })
 export class UserProfile {
   @Prop({ required: true, unique: true })
-  userId: string;
+  userId!: string;
 
   @Prop({ default: '' })
-  name: string;
+  name!: string;
 
   @Prop({ default: '' })
-  avatarUrl: string;
+  avatarUrl!: string;
 
   @Prop({ type: [String], default: [] })
-  gardenIds: string[];
+  gardenIds!: string[];
 
   @Prop({
     type: {
@@ -24,7 +24,7 @@ export class UserProfile {
     },
     default: {},
   })
-  notificationPreferences: {
+  notificationPreferences!: {
     emailNotifications: boolean;
     pushNotifications: boolean;
   };

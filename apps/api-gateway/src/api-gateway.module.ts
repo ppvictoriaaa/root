@@ -3,6 +3,7 @@ import { ConfigModule } from '@nestjs/config';
 import { JwtModule } from '@nestjs/jwt';
 import { AuthModule } from './auth/auth.module';
 import { UsersModule } from './users/users.module';
+import { PlantsModule } from './plants/plants.module';
 import { ApiGatewayController } from './api-gateway.controller';
 import { ApiGatewayService } from './api-gateway.service';
 
@@ -15,6 +16,7 @@ import { ApiGatewayService } from './api-gateway.service';
     }),
     AuthModule,
     UsersModule,
+    PlantsModule,
   ],
   controllers: [ApiGatewayController],
   providers: [ApiGatewayService],
