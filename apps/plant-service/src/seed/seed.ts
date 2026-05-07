@@ -8,14 +8,40 @@ const PlantSchema = new mongoose.Schema({
   slug: { type: String, required: true, unique: true },
   category: { type: String, required: true },
   imageUrl: { type: String, default: '' },
+  color: { type: String, default: '' },
 });
 
 const PlantModel = mongoose.model('Plant', PlantSchema);
 
 const plants = [
-  { name: 'Potato', slug: 'potato', category: 'vegetable', imageUrl: '' },
-  { name: 'Carrot', slug: 'carrot', category: 'vegetable', imageUrl: '' },
-  { name: 'Pepper', slug: 'pepper', category: 'vegetable', imageUrl: '' },
+  {
+    name: 'Potato',
+    slug: 'potato',
+    category: 'vegetable',
+    imageUrl: '/plant-icons/potato.svg',
+    color: '#8B6340',
+  },
+  {
+    name: 'Carrot',
+    slug: 'carrot',
+    category: 'vegetable',
+    imageUrl: '/plant-icons/carrot.svg',
+    color: '#E8650A',
+  },
+  {
+    name: 'Pepper',
+    slug: 'pepper',
+    category: 'vegetable',
+    imageUrl: '/plant-icons/pepper.svg',
+    color: '#D32F2F',
+  },
+  {
+    name: 'Tomato',
+    slug: 'tomato',
+    category: 'vegetable',
+    imageUrl: '/plant-icons/tomato.svg',
+    color: '#E53935',
+  },
 ];
 
 async function seed() {
@@ -23,13 +49,12 @@ async function seed() {
   console.log('Connected to MongoDB');
 
   for (const plant of plants) {
-    const exists = await PlantModel.findOne({ slug: plant.slug });
-    if (!exists) {
-      await PlantModel.create(plant);
-      console.log(`Added: ${plant.name}`);
-    } else {
-      console.log(`Skipped (already exists): ${plant.name}`);
-    }
+    await PlantModel.findOneAndUpdate(
+      { slug: plant.slug },
+      { $set: plant },
+      { upsert: true },
+    );
+    console.log(`Upserted: ${plant.name}`);
   }
 
   await mongoose.disconnect();

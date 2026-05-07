@@ -16,6 +16,9 @@ export class Plant {
 
   @Prop({ default: '' })
   imageUrl!: string;
+
+  @Prop({ default: '' })
+  color!: string;
 }
 
 export const PlantSchema = SchemaFactory.createForClass(Plant);

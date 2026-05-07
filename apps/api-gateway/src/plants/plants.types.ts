@@ -4,4 +4,5 @@ export interface Plant {
   slug: string;
   category: string;
   imageUrl: string;
+  color: string;
 }
