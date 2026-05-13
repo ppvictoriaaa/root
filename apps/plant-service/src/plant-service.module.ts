@@ -1,4 +1,6 @@
+import { join } from 'path';
 import { Module } from '@nestjs/common';
+import { ServeStaticModule } from '@nestjs/serve-static';
 import { MongooseModule } from '@nestjs/mongoose';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { PlantsController } from './plants/plants.controller';
@@ -7,6 +9,10 @@ import { Plant, PlantSchema } from './plants/schemas/plant.schema';
 
 @Module({
   imports: [
+    ServeStaticModule.forRoot({
+      rootPath: join(process.cwd(), 'apps', 'plant-service', 'public'),
+      serveRoot: '/',
+    }),
     ConfigModule.forRoot({ isGlobal: true }),
     MongooseModule.forRootAsync({
       imports: [ConfigModule],
