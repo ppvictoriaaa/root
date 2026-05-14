@@ -63,6 +63,15 @@
       "compilerOptions": {
         "tsConfigPath": "apps/user-service/tsconfig.app.json"
       }
+    },
+    "garden-service": {
+      "type": "application",
+      "root": "apps/garden-service",
+      "entryFile": "main",
+      "sourceRoot": "apps/garden-service/src",
+      "compilerOptions": {
+        "tsConfigPath": "apps/garden-service/tsconfig.app.json"
+      }
     }
   }
 }
