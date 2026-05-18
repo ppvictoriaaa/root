@@ -1,9 +1,9 @@
 import { Injectable } from '@nestjs/common';
 import { RULES, type RuleFilter } from './rules/rules.data';
-import type { PlantInput, PlantWarning } from './recommendation.types';
+import type { PlantInput, PlantWarning } from './compatibility.types';
 
 @Injectable()
-export class RecommendationService {
+export class CompatibilityService {
   evaluate(plants: PlantInput[]): PlantWarning[] {
     const warnings: PlantWarning[] = [];
 

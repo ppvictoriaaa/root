@@ -4,7 +4,7 @@ export interface PlantInput {
   category: string;
 }
 
-export interface RecommendationRequest {
+export interface CompatibilityRequest {
   plants: PlantInput[];
 }
 
@@ -16,6 +16,6 @@ export interface PlantWarning {
   plantBId: string;
 }
 
-export interface RecommendationResponse {
+export interface CompatibilityResponse {
   warnings: PlantWarning[];
 }
