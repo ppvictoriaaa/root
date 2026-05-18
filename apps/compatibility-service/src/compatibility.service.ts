@@ -20,6 +20,7 @@ export class CompatibilityService {
             reason: rule.reason,
             plantAId: a.id,
             plantBId: b.id,
+            effectRadiusM: rule.effectRadiusM ?? 5,
           });
         }
       }

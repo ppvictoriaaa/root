@@ -14,6 +14,7 @@ export interface PlantWarning {
   reason: string;
   plantAId: string;
   plantBId: string;
+  effectRadiusM: number;
 }
 
 export interface CompatibilityResponse {
