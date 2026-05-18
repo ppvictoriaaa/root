@@ -37,6 +37,15 @@
         "tsConfigPath": "apps/plant-service/tsconfig.app.json"
       }
     },
+    "compatibility-service": {
+      "type": "application",
+      "root": "apps/compatibility-service",
+      "entryFile": "main",
+      "sourceRoot": "apps/compatibility-service/src",
+      "compilerOptions": {
+        "tsConfigPath": "apps/compatibility-service/tsconfig.app.json"
+      }
+    },
     "root": {
       "type": "application",
       "root": "apps/root",
