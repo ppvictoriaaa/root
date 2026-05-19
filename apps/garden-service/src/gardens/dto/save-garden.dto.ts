@@ -21,6 +21,8 @@ export class PlacedPlantDto {
   @IsNumber() @Min(1) count!: number;
   @IsNumber() @Min(1) plantsPerRow!: number;
   @IsNumber() @Min(0) spacing!: number;
+  @IsOptional() @IsString() variety?: string;
+  @IsOptional() @IsString() plantedAt?: string;
 }
 
 export class SaveGardenDto {

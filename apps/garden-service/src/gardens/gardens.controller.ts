@@ -11,6 +11,11 @@ export class GardensController {
     return this.gardensService.findAllByUser(userId);
   }
 
+  @Get(':id')
+  findOne(@Param('id') id: string) {
+    return this.gardensService.findById(id);
+  }
+
   @Post()
   create(@Headers('x-user-id') userId: string, @Body() dto: SaveGardenDto) {
     return this.gardensService.create(userId, dto);

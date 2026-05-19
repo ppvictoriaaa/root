@@ -12,6 +12,12 @@ export class GardensService {
     return this.gardenModel.find({ userId }).sort({ updatedAt: -1 }).lean();
   }
 
+  async findById(id: string) {
+    const garden = await this.gardenModel.findById(id).lean();
+    if (!garden) throw new NotFoundException('Garden not found');
+    return garden;
+  }
+
   create(userId: string, dto: SaveGardenDto) {
     return this.gardenModel.create({ ...dto, userId });
   }
