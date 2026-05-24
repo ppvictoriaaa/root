@@ -11,6 +11,8 @@ class EventMetadata {
   @Prop() shiftReason?: string;
   @Prop() temperature?: number;
   @Prop() precipitation?: number;
+  @Prop() precipitationPrevDay?: number;
+  @Prop() heatDays?: number;
 }
 
 const EventMetadataSchema = SchemaFactory.createForClass(EventMetadata);

@@ -9,8 +9,10 @@ import { WeatherForecastDay } from '../weather/interfaces/weather-forecast.inter
 import { CareTaskType } from '../common/enums/care-task-type.enum';
 import { addDays, clampDate, toDateString } from '../common/utils/date.utils';
 
-const RAIN_THRESHOLD_MM = 5;
-const HEAT_THRESHOLD_C  = 30;
+const HEAVY_RAIN_LOOKBACK_MM = 15; // cumulative rain over last 7 days → skip watering
+const RAIN_LOOKAHEAD_MM      = 5;  // rain forecast in next 3 days → defer watering
+const HEAT_THRESHOLD_C       = 30;
+const HEAT_WAVE_DAYS         = 3;  // hot days in next 7 → water sooner
 
 @Injectable()
 export class WeatherRefreshService {
@@ -122,29 +124,47 @@ export class WeatherRefreshService {
     let adjustedCount = 0;
 
     for (const event of upcomingWatering) {
-      const eventDate  = new Date(event.date);
-      const dateStr    = toDateString(eventDate);
-      const prevStr    = toDateString(addDays(eventDate, -1));
-
-      const weather    = forecastMap.get(dateStr);
+      const eventDate = new Date(event.date);
+      const dateStr   = toDateString(eventDate);
+      const weather   = forecastMap.get(dateStr);
       if (!weather) continue;
 
-      const prevWeather      = forecastMap.get(prevStr);
-      const precipToday      = weather.precipitationSum ?? 0;
-      const precipYesterday  = prevWeather?.precipitationSum ?? 0;
-      const cumulativePrecip = precipToday + precipYesterday;
+      // Cumulative rain over the past 7 days (soil moisture context)
+      let recentPrecip = 0;
+      for (let d = 1; d <= 7; d++) {
+        const day = forecastMap.get(toDateString(addDays(eventDate, -d)));
+        if (day) recentPrecip += day.precipitationSum ?? 0;
+      }
+
+      // Upcoming rain in the next 3 days (defer watering if rain is coming)
+      let upcomingPrecip = 0;
+      for (let d = 0; d <= 2; d++) {
+        const day = forecastMap.get(toDateString(addDays(eventDate, d)));
+        if (day) upcomingPrecip += day.precipitationSum ?? 0;
+      }
+
+      // Heat wave: count hot days in the next 7 days
+      let heatDaysCount = 0;
+      for (let d = 0; d <= 6; d++) {
+        const day = forecastMap.get(toDateString(addDays(eventDate, d)));
+        if (day && day.temperatureMax >= HEAT_THRESHOLD_C) heatDaysCount++;
+      }
 
       let shift = 0;
       let shiftReason = '';
 
-      if (cumulativePrecip >= RAIN_THRESHOLD_MM) {
+      if (recentPrecip >= HEAVY_RAIN_LOOKBACK_MM) {
+        shift = 3;
+        shiftReason = `Heavy rain last 7 days (${recentPrecip.toFixed(1)} mm) — soil is saturated`;
+      } else if (upcomingPrecip >= RAIN_LOOKAHEAD_MM) {
         shift = 2;
-        shiftReason = precipYesterday >= 2
-          ? `Recent rain (${cumulativePrecip.toFixed(1)} mm over 2 days)`
-          : `Rain expected (${precipToday.toFixed(1)} mm)`;
-      } else if (weather.temperatureMax >= HEAT_THRESHOLD_C && precipToday < 1) {
+        shiftReason = `Rain forecast (${upcomingPrecip.toFixed(1)} mm in next 3 days)`;
+      } else if (heatDaysCount >= HEAT_WAVE_DAYS) {
+        shift = -2;
+        shiftReason = `Heat wave — ${heatDaysCount} hot days expected, watering moved earlier`;
+      } else if (weather.temperatureMax >= HEAT_THRESHOLD_C && upcomingPrecip < 1) {
         shift = -1;
-        shiftReason = 'High temperature and no rain';
+        shiftReason = `High temperature (${weather.temperatureMax}°C), no rain forecast`;
       }
 
       if (shift === 0) continue;
@@ -163,8 +183,9 @@ export class WeatherRefreshService {
             'metadata.originalDate': originalDate,
             'metadata.shiftReason': shiftReason,
             'metadata.temperature': weather.temperatureMax,
-            'metadata.precipitation': precipToday,
-            'metadata.precipitationPrevDay': precipYesterday,
+            'metadata.precipitation': weather.precipitationSum ?? 0,
+            'metadata.precipitationPrevDay': recentPrecip,
+            'metadata.heatDays': heatDaysCount,
           },
         },
       );
@@ -172,10 +193,16 @@ export class WeatherRefreshService {
       adjustedCount++;
     }
 
-    // Step 4: record the refresh timestamp
+    // Step 4: save weather snapshot + refresh timestamp to meta
+    const weatherDays = forecast.days.map((d) => ({
+      date: d.date,
+      precip: d.precipitationSum ?? 0,
+      maxTemp: d.temperatureMax,
+    }));
+
     await this.metaModel.updateOne(
       { gardenId },
-      { $set: { lastWeatherRefreshAt: new Date() } },
+      { $set: { lastWeatherRefreshAt: new Date(), weatherDays, weatherAccuracyDays: forecastDays } },
     );
 
     this.logger.log(`Garden ${gardenId}: adjusted ${adjustedCount} watering event(s)`);

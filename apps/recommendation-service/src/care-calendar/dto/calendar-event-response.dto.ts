@@ -1,3 +1,9 @@
+export class WeatherDayDto {
+  date!: string;
+  precip!: number;
+  maxTemp!: number;
+}
+
 export class CalendarEventResponseDto {
   id!: string;
   plantSlug!: string;
@@ -21,6 +27,7 @@ export class GenerateCalendarResponseDto {
   weatherAccuracyDays!: number;
   notice!: string;
   events!: CalendarEventResponseDto[];
+  weatherDays?: WeatherDayDto[];
 }
 
 export class UpdateEventStatusDto {

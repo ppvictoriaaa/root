@@ -6,6 +6,7 @@ import { CareCalendarMeta, CareCalendarMetaDocument } from './schemas/care-calen
 import { GenerateCareCalendarDto } from './dto/generate-calendar.dto';
 import { CalendarEventResponseDto, GenerateCalendarResponseDto } from './dto/calendar-event-response.dto';
 import { CalendarGenerationService } from '../calendar-generation/calendar-generation.service';
+import { WeatherRefreshService } from './weather-refresh.service';
 import { CalendarEventStatus } from '../common/enums/calendar-event-status.enum';
 import { toDateString } from '../common/utils/date.utils';
 
@@ -19,6 +20,7 @@ export class CareCalendarService {
     @InjectModel(CareCalendarMeta.name)
     private readonly metaModel: Model<CareCalendarMetaDocument>,
     private readonly generationService: CalendarGenerationService,
+    private readonly weatherRefreshService: WeatherRefreshService,
   ) {}
 
   async generate(dto: GenerateCareCalendarDto): Promise<GenerateCalendarResponseDto> {
@@ -52,6 +54,34 @@ export class CareCalendarService {
       { upsert: true },
     );
 
+    // Run weather refresh immediately so icons and adjustments are visible right away
+    let weatherDays: GenerateCalendarResponseDto['weatherDays'] = [];
+    let weatherAccuracyDays = result.weatherAccuracyDays;
+    let weatherApplied = result.weatherApplied;
+    try {
+      await this.weatherRefreshService.refreshByGardenId(dto.gardenId);
+      const meta = await this.metaModel.findOne({ gardenId: dto.gardenId }).lean().exec();
+      if (meta) {
+        weatherDays = meta.weatherDays ?? [];
+        weatherAccuracyDays = meta.weatherAccuracyDays ?? weatherAccuracyDays;
+      }
+      const updatedEvents = await this.eventModel.find({ gardenId: dto.gardenId }).sort({ date: 1 }).lean().exec();
+      weatherApplied = updatedEvents.some((e) => (e as any).weatherAdjusted);
+      return {
+        gardenId: dto.gardenId,
+        generatedAt: new Date().toISOString(),
+        calendarStart: result.calendarStart,
+        calendarEnd: result.calendarEnd,
+        weatherApplied,
+        weatherAccuracyDays,
+        notice: result.notice,
+        events: updatedEvents.map((e) => this.toResponseDto(e as CareCalendarEventDocument)),
+        weatherDays,
+      };
+    } catch (err: any) {
+      this.logger.warn(`Post-generate weather refresh failed: ${err?.message}`);
+    }
+
     return {
       gardenId: dto.gardenId,
       generatedAt: new Date().toISOString(),
@@ -61,6 +91,7 @@ export class CareCalendarService {
       weatherAccuracyDays: result.weatherAccuracyDays,
       notice: result.notice,
       events: result.events.map((e) => this.toResponseDto(e as any)),
+      weatherDays: [],
     };
   }
 
@@ -80,9 +111,10 @@ export class CareCalendarService {
       calendarStart: dates[0],
       calendarEnd: dates[dates.length - 1],
       weatherApplied: mapped.some((e) => e.weatherAdjusted),
-      weatherAccuracyDays: 0,
+      weatherAccuracyDays: meta.weatherAccuracyDays ?? 0,
       notice: '',
       events: mapped,
+      weatherDays: meta.weatherDays ?? [],
     };
   }
 
@@ -111,6 +143,36 @@ export class CareCalendarService {
       .exec();
     if (!updated) throw new NotFoundException(`Event not found: ${eventId}`);
     return this.toResponseDto(updated as CareCalendarEventDocument);
+  }
+
+  async addPlants(gardenId: string, slugs: string[]): Promise<GenerateCalendarResponseDto> {
+    const meta = await this.metaModel.findOne({ gardenId }).lean().exec();
+    if (!meta) throw new NotFoundException(`No calendar found for garden: ${gardenId}`);
+
+    // Generate a fresh full calendar using existing meta config (fetches garden internally)
+    const result = await this.generationService.generate({
+      userId: meta.userId,
+      gardenId,
+      location: meta.location,
+      soilType: meta.soilType as any,
+    });
+
+    // Insert only events for the new plant slugs — existing events are untouched
+    const newEvents = result.events.filter((e) => slugs.includes(e.plantSlug));
+    if (newEvents.length > 0) {
+      await this.eventModel.insertMany(newEvents);
+      this.logger.log(`Added ${newEvents.length} event(s) for slugs [${slugs.join(', ')}] to garden ${gardenId}`);
+    }
+
+    try {
+      await this.weatherRefreshService.refreshByGardenId(gardenId);
+    } catch (err: any) {
+      this.logger.warn(`Weather refresh after add-plants failed: ${err?.message}`);
+    }
+
+    const updated = await this.getByGarden(gardenId);
+    if (!updated) throw new NotFoundException(`Calendar not found after add-plants for garden: ${gardenId}`);
+    return updated;
   }
 
   async deleteByGarden(gardenId: string): Promise<void> {

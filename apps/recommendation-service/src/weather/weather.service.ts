@@ -19,7 +19,7 @@ export class WeatherService {
   ) {}
 
   async getForecast(latitude: number, longitude: number): Promise<WeatherForecast | null> {
-    const forecastDays = this.config.get<number>('WEATHER_FORECAST_DAYS', 3);
+    const forecastDays = this.config.get<number>('WEATHER_FORECAST_DAYS', 16);
     const baseUrl = this.config.get<string>(
       'WEATHER_API_URL',
       'https://api.open-meteo.com/v1/forecast',
@@ -33,7 +33,7 @@ export class WeatherService {
             longitude,
             daily: 'temperature_2m_max,temperature_2m_min,precipitation_sum',
             forecast_days: forecastDays,
-            past_days: 1,
+            past_days: 7,
             timezone: 'auto',
           },
         }),

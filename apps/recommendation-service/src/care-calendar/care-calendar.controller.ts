@@ -2,6 +2,7 @@ import { Body, Controller, Delete, Get, HttpCode, HttpStatus, NotFoundException,
 import { CareCalendarService } from './care-calendar.service';
 import { WeatherRefreshService } from './weather-refresh.service';
 import { GenerateCareCalendarDto } from './dto/generate-calendar.dto';
+import { AddPlantsToCalendarDto } from './dto/add-plants.dto';
 
 @Controller('care-calendar')
 export class CareCalendarController {
@@ -13,6 +14,14 @@ export class CareCalendarController {
   @Post('generate')
   generate(@Body() dto: GenerateCareCalendarDto) {
     return this.service.generate(dto);
+  }
+
+  @Post(':gardenId/add-plants')
+  addPlants(
+    @Param('gardenId') gardenId: string,
+    @Body() dto: AddPlantsToCalendarDto,
+  ) {
+    return this.service.addPlants(gardenId, dto.slugs);
   }
 
   @Post(':gardenId/refresh-weather')

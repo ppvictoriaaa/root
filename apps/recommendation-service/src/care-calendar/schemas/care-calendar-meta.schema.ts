@@ -21,6 +21,10 @@ export class CareCalendarMeta {
   @Prop({ type: String }) soilType?: string;
   @Prop({ required: true, type: Date }) lastGeneratedAt!: Date;
   @Prop({ type: Date }) lastWeatherRefreshAt?: Date;
+  @Prop({ type: Number }) weatherAccuracyDays?: number;
+  // Snapshot of the forecast window from the last weather refresh, used for calendar visual display.
+  @Prop({ type: [Object], default: [] })
+  weatherDays?: Array<{ date: string; precip: number; maxTemp: number }>;
 }
 
 export const CareCalendarMetaSchema = SchemaFactory.createForClass(CareCalendarMeta);
