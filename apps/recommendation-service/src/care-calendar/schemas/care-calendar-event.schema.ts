@@ -22,6 +22,7 @@ export class CareCalendarEvent {
   @Prop({ required: true, index: true }) userId!: string;
   @Prop({ required: true, index: true }) gardenId!: string;
   @Prop({ required: true }) plantSlug!: string;
+  @Prop() plantLabel?: string;
   @Prop({ required: true, type: String }) type!: string;
   @Prop({ required: true }) title!: string;
   @Prop() description?: string;

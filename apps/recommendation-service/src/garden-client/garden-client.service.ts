@@ -11,6 +11,7 @@ export interface PlacedPlant {
   category?: string;
   variety?: string;
   plantedAt?: string;
+  customName?: string;
 }
 
 export interface GardenData {

@@ -17,6 +17,7 @@ export class PlacedPlantDoc {
   @Prop({ required: true }) spacing!: number;
   @Prop() variety?: string;
   @Prop() plantedAt?: string;
+  @Prop() customName?: string;
 }
 
 export const PlacedPlantDocSchema = SchemaFactory.createForClass(PlacedPlantDoc);

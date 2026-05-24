@@ -17,6 +17,7 @@ type AnyEvent = {
   userId: string;
   gardenId: string;
   plantSlug: string;
+  plantLabel?: string;
   type: CareTaskType;
   title: string;
   description?: string;
@@ -111,13 +112,15 @@ export class CalendarGenerationService {
     // ── 6. Generate events for each plant in the garden ──────────────────────────
     const allEvents: AnyEvent[] = [];
 
-    // Deduplicate by slug — a garden can have the same plant placed multiple times,
-    // but we generate one care schedule per unique plant type.
-    const processedSlugs = new Set<string>();
+    // Plants without a customName are deduplicated by slug (one schedule per species).
+    // Plants with a customName are treated as independent plots and always generate their own events.
+    const processedDefaultSlugs = new Set<string>();
 
     for (const plant of garden.placedPlants) {
-      if (processedSlugs.has(plant.slug)) continue;
-      processedSlugs.add(plant.slug);
+      if (!plant.customName) {
+        if (processedDefaultSlugs.has(plant.slug)) continue;
+        processedDefaultSlugs.add(plant.slug);
+      }
 
       const rule = ruleMap.get(plant.slug)!;
 
@@ -132,6 +135,8 @@ export class CalendarGenerationService {
 
       const growthDays = calculateGrowthDays(rule, selectedVariety);
 
+      const instanceEvents: AnyEvent[] = [];
+
       const wateringEvents = generateWateringEvents(
         rule,
         plantedAt,
@@ -139,7 +144,7 @@ export class CalendarGenerationService {
         dto.soilType,
         selectedVariety,
       );
-      allEvents.push(...(wateringEvents as unknown as AnyEvent[]));
+      instanceEvents.push(...(wateringEvents as unknown as AnyEvent[]));
 
       const fertilizingEvents = generateFertilizingEvents(
         rule,
@@ -147,10 +152,10 @@ export class CalendarGenerationService {
         calendarEnd,
         selectedVariety,
       );
-      allEvents.push(...(fertilizingEvents as unknown as AnyEvent[]));
+      instanceEvents.push(...(fertilizingEvents as unknown as AnyEvent[]));
 
       const harvestEvent = generateHarvestEvent(rule, plantedAt, growthDays, selectedVariety);
-      if (harvestEvent) allEvents.push(harvestEvent as unknown as AnyEvent);
+      if (harvestEvent) instanceEvents.push(harvestEvent as unknown as AnyEvent);
 
       const hasCareEvent =
         !rule.harvesting.enabled &&
@@ -161,7 +166,7 @@ export class CalendarGenerationService {
       if (hasCareEvent) {
         const careDate = addMonths(plantedAt, 1);
         if (careDate <= calendarEnd) {
-          allEvents.push({
+          instanceEvents.push({
             userId: dto.userId,
             gardenId: dto.gardenId,
             plantSlug: plant.slug,
@@ -176,6 +181,16 @@ export class CalendarGenerationService {
           });
         }
       }
+
+      // For named instances: tag events with the custom label and update titles
+      if (plant.customName) {
+        for (const event of instanceEvents) {
+          event.plantLabel = plant.customName;
+          event.title = event.title.replace(plant.slug, plant.customName);
+        }
+      }
+
+      allEvents.push(...instanceEvents);
     }
 
     // ── 7. Stamp userId + gardenId on every generated event ─────────────────────

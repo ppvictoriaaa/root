@@ -21,7 +21,7 @@ export class CareCalendarController {
     @Param('gardenId') gardenId: string,
     @Body() dto: AddPlantsToCalendarDto,
   ) {
-    return this.service.addPlants(gardenId, dto.slugs);
+    return this.service.addPlants(gardenId, dto.plants);
   }
 
   @Post(':gardenId/refresh-weather')

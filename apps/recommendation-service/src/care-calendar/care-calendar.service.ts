@@ -145,7 +145,10 @@ export class CareCalendarService {
     return this.toResponseDto(updated as CareCalendarEventDocument);
   }
 
-  async addPlants(gardenId: string, slugs: string[]): Promise<GenerateCalendarResponseDto> {
+  async addPlants(
+    gardenId: string,
+    plants: { slug: string; label?: string }[],
+  ): Promise<GenerateCalendarResponseDto> {
     const meta = await this.metaModel.findOne({ gardenId }).lean().exec();
     if (!meta) throw new NotFoundException(`No calendar found for garden: ${gardenId}`);
 
@@ -157,11 +160,19 @@ export class CareCalendarService {
       soilType: meta.soilType as any,
     });
 
-    // Insert only events for the new plant slugs — existing events are untouched
-    const newEvents = result.events.filter((e) => slugs.includes(e.plantSlug));
+    // Insert only events for the specified plant instances (slug + optional label)
+    const newEvents = result.events.filter((e) =>
+      plants.some((item) => {
+        if ((e as any).plantSlug !== item.slug) return false;
+        return item.label
+          ? (e as any).plantLabel === item.label
+          : !(e as any).plantLabel;
+      }),
+    );
     if (newEvents.length > 0) {
       await this.eventModel.insertMany(newEvents);
-      this.logger.log(`Added ${newEvents.length} event(s) for slugs [${slugs.join(', ')}] to garden ${gardenId}`);
+      const keys = plants.map((p) => (p.label ? `${p.slug}(${p.label})` : p.slug)).join(', ');
+      this.logger.log(`Added ${newEvents.length} event(s) for [${keys}] to garden ${gardenId}`);
     }
 
     try {
@@ -185,6 +196,7 @@ export class CareCalendarService {
     return {
       id: doc._id?.toString() ?? doc.id,
       plantSlug: doc.plantSlug,
+      plantLabel: doc.plantLabel,
       type: doc.type,
       title: doc.title,
       description: doc.description,

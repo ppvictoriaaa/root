@@ -23,6 +23,7 @@ export class PlacedPlantDto {
   @IsNumber() @Min(0) spacing!: number;
   @IsOptional() @IsString() variety?: string;
   @IsOptional() @IsString() plantedAt?: string;
+  @IsOptional() @IsString() customName?: string;
 }
 
 export class SaveGardenDto {
