@@ -6,6 +6,7 @@ export class WeatherDayDto {
 
 export class CalendarEventResponseDto {
   id!: string;
+  gardenId!: string;
   plantSlug!: string;
   plantLabel?: string;
   type!: string;

@@ -118,6 +118,38 @@ export class CareCalendarService {
     };
   }
 
+  async getGardenIdsWithCalendar(gardenIds: string[]): Promise<string[]> {
+    if (gardenIds.length === 0) return [];
+    const metas = await this.metaModel
+      .find({ gardenId: { $in: gardenIds } })
+      .select('gardenId')
+      .lean()
+      .exec();
+    return metas.map((m) => m.gardenId);
+  }
+
+  async getByUserAndDate(
+    userId: string,
+    date: string,
+    gardenId?: string,
+  ): Promise<CalendarEventResponseDto[]> {
+    const d = new Date(date + 'T12:00:00');
+    const startOfDay = new Date(d.getFullYear(), d.getMonth(), d.getDate());
+    const endOfDay = new Date(d.getFullYear(), d.getMonth(), d.getDate() + 1);
+    const filter: Record<string, unknown> = {
+      userId,
+      date: { $gte: startOfDay, $lt: endOfDay },
+      status: CalendarEventStatus.Planned,
+    };
+    if (gardenId) filter['gardenId'] = gardenId;
+    const events = await this.eventModel
+      .find(filter)
+      .sort({ date: 1 })
+      .lean()
+      .exec();
+    return events.map((e) => this.toResponseDto(e as CareCalendarEventDocument));
+  }
+
   async getByGardenAndMonth(
     gardenId: string,
     year: number,
@@ -195,6 +227,7 @@ export class CareCalendarService {
     const doc = event as any;
     return {
       id: doc._id?.toString() ?? doc.id,
+      gardenId: doc.gardenId,
       plantSlug: doc.plantSlug,
       plantLabel: doc.plantLabel,
       type: doc.type,

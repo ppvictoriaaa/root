@@ -2,18 +2,15 @@ import { Module } from '@nestjs/common';
 import { MongooseModule } from '@nestjs/mongoose';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { HttpModule } from '@nestjs/axios';
-import { UserServiceController } from './user-service.controller';
-import { UserServiceService } from './user-service.service';
-import { NotificationsService } from './notifications.service';
-import { UserProfile, UserProfileSchema } from './schemas/user-profile.schema';
-import {
-  EmailVerification,
-  EmailVerificationSchema,
-} from './schemas/email-verification.schema';
+import { ScheduleModule } from '@nestjs/schedule';
+import { ReminderService } from './reminder.service';
+import { ReminderScheduler } from './reminder.scheduler';
+import { ReminderController } from './reminder.controller';
 import {
   GardenNotificationSettings,
   GardenNotificationSettingsSchema,
 } from './schemas/garden-notification-settings.schema';
+import { UserProfile, UserProfileSchema } from './schemas/user-profile.schema';
 
 @Module({
   imports: [
@@ -29,16 +26,13 @@ import {
       inject: [ConfigService],
     }),
     MongooseModule.forFeature([
+      { name: GardenNotificationSettings.name, schema: GardenNotificationSettingsSchema },
       { name: UserProfile.name, schema: UserProfileSchema },
-      { name: EmailVerification.name, schema: EmailVerificationSchema },
-      {
-        name: GardenNotificationSettings.name,
-        schema: GardenNotificationSettingsSchema,
-      },
     ]),
     HttpModule,
+    ScheduleModule.forRoot(),
   ],
-  controllers: [UserServiceController],
-  providers: [UserServiceService, NotificationsService],
+  controllers: [ReminderController],
+  providers: [ReminderService, ReminderScheduler],
 })
-export class UserServiceModule {}
+export class NotificationServiceModule {}

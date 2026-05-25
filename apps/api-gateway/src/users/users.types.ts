@@ -1,7 +1,7 @@
 import { Request } from 'express';
 
 export interface RequestWithUser extends Request {
-  user: { userId: string; email: string };
+  user: { sub: string; email: string };
 }
 
 export interface UserProfile {
@@ -13,6 +13,15 @@ export interface UserProfile {
     emailNotifications: boolean;
     pushNotifications: boolean;
   };
+  verifiedEmails: string[];
+}
+
+export interface GardenNotificationSettings {
+  gardenId: string;
+  notificationEmail: string;
+  isEmailVerified: boolean;
+  daysBefore: number;
+  time: string;
 }
 
 export interface DeleteResult {

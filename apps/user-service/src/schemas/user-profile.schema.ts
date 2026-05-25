@@ -28,6 +28,9 @@ export class UserProfile {
     emailNotifications: boolean;
     pushNotifications: boolean;
   };
+
+  @Prop({ type: [String], default: [] })
+  verifiedEmails!: string[];
 }
 
 export const UserProfileSchema = SchemaFactory.createForClass(UserProfile);

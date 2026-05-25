@@ -29,6 +29,21 @@ export class CareCalendarController {
     return this.weatherRefresh.refreshByGardenId(gardenId);
   }
 
+  @Get('with-calendar')
+  getWithCalendar(@Query('gardenIds') gardenIds: string) {
+    const ids = gardenIds ? gardenIds.split(',').filter(Boolean) : [];
+    return this.service.getGardenIdsWithCalendar(ids);
+  }
+
+  @Get('upcoming')
+  getUpcoming(
+    @Query('userId') userId: string,
+    @Query('date') date: string,
+    @Query('gardenId') gardenId?: string,
+  ) {
+    return this.service.getByUserAndDate(userId, date, gardenId);
+  }
+
   @Get(':gardenId/month')
   getByMonth(
     @Param('gardenId') gardenId: string,
