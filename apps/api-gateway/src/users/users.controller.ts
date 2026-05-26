@@ -28,8 +28,8 @@ const USER_SVC = 'http://localhost:3002/users';
 export class UsersController {
   constructor(private readonly httpService: HttpService) {}
 
-  private headers(req: RequestWithUser) {
-    return { 'x-user-id': req.user.sub };
+  private headers(req: RequestWithUser): Record<string, string> {
+    return { 'x-user-id': String(req.user.sub) };
   }
 
   private handleError(err: unknown): never {
@@ -179,10 +179,20 @@ export class UsersController {
   async triggerTestReminder(
     @Req() req: RequestWithUser,
     @Param('gardenId') gardenId: string,
-  ) {
+  ): Promise<{
+    sent: boolean;
+    eventsCount: number;
+    previewUrl: string | null;
+    targetDate: string;
+  }> {
     try {
       const res = await firstValueFrom(
-        this.httpService.post(
+        this.httpService.post<{
+          sent: boolean;
+          eventsCount: number;
+          previewUrl: string | null;
+          targetDate: string;
+        }>(
           `${USER_SVC}/notifications/trigger-test/${gardenId}`,
           {},
           { headers: this.headers(req) },

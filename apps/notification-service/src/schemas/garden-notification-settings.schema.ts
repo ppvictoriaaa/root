@@ -1,7 +1,8 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import { Document } from 'mongoose';
 
-export type GardenNotificationSettingsDocument = GardenNotificationSettings & Document;
+export type GardenNotificationSettingsDocument = GardenNotificationSettings &
+  Document;
 
 @Schema({ collection: 'gardennotificationsettings' })
 export class GardenNotificationSettings {
@@ -12,4 +13,6 @@ export class GardenNotificationSettings {
   @Prop({ default: '09:00' }) time!: string;
 }
 
-export const GardenNotificationSettingsSchema = SchemaFactory.createForClass(GardenNotificationSettings);
+export const GardenNotificationSettingsSchema = SchemaFactory.createForClass(
+  GardenNotificationSettings,
+);

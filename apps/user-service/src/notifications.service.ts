@@ -4,6 +4,7 @@ import { HttpService } from '@nestjs/axios';
 import { firstValueFrom } from 'rxjs';
 import { Model } from 'mongoose';
 import * as nodemailer from 'nodemailer';
+import type SMTPTransport from 'nodemailer/lib/smtp-transport';
 import {
   UserProfile,
   UserProfileDocument,
@@ -72,15 +73,15 @@ export class NotificationsService implements OnModuleInit {
     await this.verificationModel.deleteMany({ userId });
     await this.verificationModel.create({ userId, email, code });
 
-    const info = await this.transporter!.sendMail({
+    const info = (await this.transporter!.sendMail({
       from: process.env.SMTP_FROM ?? '"Garden Planner" <noreply@garden.app>',
       to: email,
       subject: 'Garden Planner — your verification code',
       text: `Your verification code is: ${code}\n\nThis code expires in 10 minutes.`,
       html: `<div style="font-family:sans-serif;max-width:400px;padding:24px;background:#F4F0E8;border-radius:12px"><p style="color:#1A2E26;margin-top:0">Your verification code:</p><p style="font-size:2.2em;font-weight:700;letter-spacing:0.15em;color:#2D4A3E;margin:0">${code}</p><p style="color:#7A8A83;font-size:13px;margin-top:16px">Expires in 10 minutes</p></div>`,
-    });
+    })) as SMTPTransport.SentMessageInfo;
 
-    const preview = nodemailer.getTestMessageUrl(info);
+    const preview: string | false = nodemailer.getTestMessageUrl(info);
     if (preview) console.log(`[DEV] Verification email: ${preview}`);
   }
 
@@ -102,7 +103,9 @@ export class NotificationsService implements OnModuleInit {
 
   // ─── Per-garden settings ──────────────────────────────────────────────────
 
-  async getAllGardenSettings(userId: string): Promise<GardenSettingsResponse[]> {
+  async getAllGardenSettings(
+    userId: string,
+  ): Promise<GardenSettingsResponse[]> {
     const [settings, profile] = await Promise.all([
       this.gardenSettingsModel.find({ userId }).lean().exec(),
       this.profileModel
@@ -115,7 +118,8 @@ export class NotificationsService implements OnModuleInit {
     return settings.map((s) => ({
       gardenId: s.gardenId,
       notificationEmail: s.notificationEmail,
-      isEmailVerified: !!s.notificationEmail && verified.has(s.notificationEmail),
+      isEmailVerified:
+        !!s.notificationEmail && verified.has(s.notificationEmail),
       daysBefore: s.daysBefore,
       time: s.time,
     }));
