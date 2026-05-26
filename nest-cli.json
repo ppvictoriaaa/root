@@ -73,6 +73,15 @@
         "tsConfigPath": "apps/user-service/tsconfig.app.json"
       }
     },
+    "ai-service": {
+      "type": "application",
+      "root": "apps/ai-service",
+      "entryFile": "main",
+      "sourceRoot": "apps/ai-service/src",
+      "compilerOptions": {
+        "tsConfigPath": "apps/ai-service/tsconfig.app.json"
+      }
+    },
     "notification-service": {
       "type": "application",
       "root": "apps/notification-service",

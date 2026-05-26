@@ -6,6 +6,7 @@ import { UsersModule } from './users/users.module';
 import { PlantsModule } from './plants/plants.module';
 import { GardensModule } from './gardens/gardens.module';
 import { CompatibilityModule } from './compatibility/compatibility.module';
+import { AiModule } from './ai/ai.module';
 import { ApiGatewayController } from './api-gateway.controller';
 import { ApiGatewayService } from './api-gateway.service';
 
@@ -21,6 +22,7 @@ import { ApiGatewayService } from './api-gateway.service';
     PlantsModule,
     GardensModule,
     CompatibilityModule,
+    AiModule,
   ],
   controllers: [ApiGatewayController],
   providers: [ApiGatewayService],

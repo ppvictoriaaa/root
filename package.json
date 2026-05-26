@@ -20,7 +20,8 @@
     "start:compatibility": "nest start compatibility-service --watch",
     "start:recommendations": "nest start recommendation-service --watch",
     "start:notifications": "nest start notification-service --watch",
-    "start:all": "concurrently -n \"gateway,auth,users,plants,gardens,compatibility,recommendations,notifications\" -c \"cyan,green,yellow,magenta,blue,blue,red,white\" \"npm run start:gateway\" \"npm run start:auth\" \"npm run start:users\" \"npm run start:plants\" \"npm run start:gardens\" \"npm run start:compatibility\" \"npm run start:recommendations\" \"npm run start:notifications\"",
+    "start:ai": "nest start ai-service --watch",
+    "start:all": "concurrently -n \"gateway,auth,users,plants,gardens,compatibility,recommendations,notifications,ai\" -c \"cyan,green,yellow,magenta,blue,blue,red,white,gray\" \"npm run start:gateway\" \"npm run start:auth\" \"npm run start:users\" \"npm run start:plants\" \"npm run start:gardens\" \"npm run start:compatibility\" \"npm run start:recommendations\" \"npm run start:notifications\" \"npm run start:ai\"",
     "seed:plants": "ts-node -r tsconfig-paths/register apps/plant-service/src/seed/seed.ts",
     "seed:recommendations": "ts-node -r tsconfig-paths/register apps/recommendation-service/src/plant-care-rules/seed/run-seed.ts",
     "lint": "eslint \"{src,apps,libs,test}/**/*.ts\" --fix",
@@ -31,6 +32,7 @@
     "test:e2e": "jest --config ./apps/root/test/jest-e2e.json"
   },
   "dependencies": {
+    "@anthropic-ai/sdk": "^0.98.0",
     "@nestjs/axios": "^4.0.1",
     "@nestjs/common": "^11.0.1",
     "@nestjs/config": "^4.0.4",
@@ -48,6 +50,7 @@
     "bcrypt": "^6.0.0",
     "class-transformer": "^0.5.1",
     "class-validator": "^0.15.1",
+    "groq-sdk": "^1.2.0",
     "mongoose": "^9.4.1",
     "nodemailer": "^8.0.8",
     "passport": "^0.7.0",
