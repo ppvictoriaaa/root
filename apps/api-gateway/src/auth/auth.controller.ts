@@ -6,19 +6,30 @@ import {
   HttpException,
 } from '@nestjs/common';
 import { HttpService } from '@nestjs/axios';
+import { ConfigService } from '@nestjs/config';
 import { firstValueFrom } from 'rxjs';
 import { AxiosError } from 'axios';
 
 @Controller('auth')
 export class AuthController {
-  constructor(private readonly httpService: HttpService) {}
+  private readonly authServiceUrl: string;
+
+  constructor(
+    private readonly httpService: HttpService,
+    private readonly config: ConfigService,
+  ) {
+    this.authServiceUrl = this.config.get<string>(
+      'AUTH_SERVICE_URL',
+      'http://localhost:3001',
+    );
+  }
 
   @Post('register')
   async register(@Body() body: Record<string, unknown>) {
     try {
       const response = await firstValueFrom(
         this.httpService.post<Record<string, unknown>>(
-          'http://localhost:3001/auth/register',
+          `${this.authServiceUrl}/auth/register`,
           body,
         ),
       );
@@ -39,7 +50,7 @@ export class AuthController {
     try {
       const response = await firstValueFrom(
         this.httpService.post<Record<string, unknown>>(
-          'http://localhost:3001/auth/login',
+          `${this.authServiceUrl}/auth/login`,
           body,
         ),
       );

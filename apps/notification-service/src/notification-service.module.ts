@@ -6,6 +6,7 @@ import { ScheduleModule } from '@nestjs/schedule';
 import { ReminderService } from './reminder.service';
 import { ReminderScheduler } from './reminder.scheduler';
 import { ReminderController } from './reminder.controller';
+import { RedisProvider } from './redis.provider';
 import {
   GardenNotificationSettings,
   GardenNotificationSettingsSchema,
@@ -33,6 +34,6 @@ import { UserProfile, UserProfileSchema } from './schemas/user-profile.schema';
     ScheduleModule.forRoot(),
   ],
   controllers: [ReminderController],
-  providers: [ReminderService, ReminderScheduler],
+  providers: [ReminderService, ReminderScheduler, RedisProvider],
 })
 export class NotificationServiceModule {}

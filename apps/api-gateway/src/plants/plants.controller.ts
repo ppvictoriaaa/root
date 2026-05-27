@@ -27,12 +27,7 @@ export class PlantsController {
       const response = await firstValueFrom(
         this.httpService.get<Plant[]>(`${this.plantServiceUrl}/plants`),
       );
-      return response.data.map((plant) => ({
-        ...plant,
-        imageUrl: plant.imageUrl?.startsWith('/')
-          ? `${this.plantServiceUrl}${plant.imageUrl}`
-          : plant.imageUrl,
-      }));
+      return response.data;
     } catch (err) {
       const error = err as AxiosError;
       throw new HttpException(

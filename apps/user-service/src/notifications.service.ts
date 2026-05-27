@@ -26,7 +26,7 @@ export interface GardenSettingsResponse {
   time: string;
 }
 
-const NOTIFICATION_SVC = 'http://localhost:3007/reminders';
+const NOTIFICATION_SVC = `${process.env.NOTIFICATION_SERVICE_URL ?? 'http://localhost:3007'}/reminders`;
 
 @Injectable()
 export class NotificationsService implements OnModuleInit {

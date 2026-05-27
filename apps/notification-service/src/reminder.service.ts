@@ -1,9 +1,11 @@
-import { Injectable, Logger, OnModuleInit } from '@nestjs/common';
+import { Injectable, Logger, OnModuleInit, Inject } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { HttpService } from '@nestjs/axios';
 import { firstValueFrom } from 'rxjs';
 import { Model } from 'mongoose';
 import * as nodemailer from 'nodemailer';
+import type Redis from 'ioredis';
+import { REDIS_CLIENT } from './redis.provider';
 import {
   GardenNotificationSettings,
   GardenNotificationSettingsDocument,
@@ -23,8 +25,8 @@ const EVENT_ICONS: Record<string, string> = {
   care: '✂️',
 };
 
-const RECS_URL = 'http://localhost:3006/care-calendar';
-const GARDENS_URL = 'http://localhost:3005/gardens';
+const RECS_URL = `${process.env.RECOMMENDATION_SERVICE_URL ?? 'http://localhost:3006'}/care-calendar`;
+const GARDENS_URL = `${process.env.GARDEN_SERVICE_URL ?? 'http://localhost:3005'}/gardens`;
 
 @Injectable()
 export class ReminderService implements OnModuleInit {
@@ -37,6 +39,7 @@ export class ReminderService implements OnModuleInit {
     @InjectModel(UserProfile.name)
     private profileModel: Model<UserProfileDocument>,
     private readonly httpService: HttpService,
+    @Inject(REDIS_CLIENT) private readonly redis: Redis,
   ) {}
 
   async onModuleInit() {
@@ -80,6 +83,16 @@ export class ReminderService implements OnModuleInit {
     target.setDate(today.getDate() + (settings.daysBefore ?? 0));
     const dateStr = `${target.getFullYear()}-${String(target.getMonth() + 1).padStart(2, '0')}-${String(target.getDate()).padStart(2, '0')}`;
 
+    const dedupeKey = `reminder:sent:${userId}:${gardenId}:${dateStr}`;
+    try {
+      const alreadySent = await this.redis.get(dedupeKey);
+      if (alreadySent) {
+        return { sent: false, eventsCount: 0, previewUrl: null, targetDate: dateStr };
+      }
+    } catch {
+      // Redis unavailable — skip deduplication check
+    }
+
     const events = await this.fetchEvents(userId, dateStr, gardenId);
     if (events.length === 0) {
       return { sent: false, eventsCount: 0, previewUrl: null, targetDate: dateStr };
@@ -87,6 +100,13 @@ export class ReminderService implements OnModuleInit {
 
     const gardenName = await this.fetchGardenName(userId, gardenId);
     const previewUrl = await this.sendEmail(settings.notificationEmail, dateStr, gardenName, events);
+
+    try {
+      await this.redis.set(dedupeKey, '1', 'EX', 25 * 60 * 60); // 25 hours
+    } catch {
+      // Redis unavailable — skip deduplication record
+    }
+
     return { sent: true, eventsCount: events.length, previewUrl, targetDate: dateStr };
   }
 

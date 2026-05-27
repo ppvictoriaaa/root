@@ -39,8 +39,8 @@ interface ChatMessage {
   content: string;
 }
 
-const GARDEN_SVC = 'http://localhost:3005/gardens';
-const RECS_SVC = 'http://localhost:3006/care-calendar';
+const GARDEN_SVC = `${process.env.GARDEN_SERVICE_URL ?? 'http://localhost:3005'}/gardens`;
+const RECS_SVC = `${process.env.RECOMMENDATION_SERVICE_URL ?? 'http://localhost:3006'}/care-calendar`;
 
 const EVENT_ICONS: Record<string, string> = {
   watering: '💧',
@@ -77,7 +77,10 @@ export class AiService {
     return response.choices[0]?.message?.content ?? '';
   }
 
-  private async buildSystemPrompt(userId: string, gardenId?: string): Promise<string> {
+  private async buildSystemPrompt(
+    userId: string,
+    gardenId?: string,
+  ): Promise<string> {
     const all = await this.fetchGardens(userId);
     const gardens = gardenId ? all.filter((g) => g._id === gardenId) : all;
 
@@ -136,12 +139,19 @@ Guidelines:
 
     const freeCells = totalCells - occupied.size;
 
-    const events = await this.fetchUpcomingEvents(garden._id, todayStr, in14Str);
+    const events = await this.fetchUpcomingEvents(
+      garden._id,
+      todayStr,
+      in14Str,
+    );
     const taskLines =
       events.length > 0
         ? events
             .slice(0, 10)
-            .map((e) => `  • ${e.date} — ${EVENT_ICONS[e.type] ?? '🌱'} ${e.title}`)
+            .map(
+              (e) =>
+                `  • ${e.date} — ${EVENT_ICONS[e.type] ?? '🌱'} ${e.title}`,
+            )
             .join('\n')
         : '  No upcoming tasks';
 

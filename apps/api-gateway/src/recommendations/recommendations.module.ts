@@ -1,10 +1,10 @@
 import { Module } from '@nestjs/common';
 import { HttpModule } from '@nestjs/axios';
 import { ConfigModule } from '@nestjs/config';
-import { UsersController } from './users.controller';
+import { RecommendationsController } from './recommendations.controller';
 
 @Module({
   imports: [HttpModule, ConfigModule],
-  controllers: [UsersController],
+  controllers: [RecommendationsController],
 })
-export class UsersModule {}
+export class RecommendationsModule {}

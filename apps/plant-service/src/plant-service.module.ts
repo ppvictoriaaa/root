@@ -6,11 +6,12 @@ import { ConfigModule, ConfigService } from '@nestjs/config';
 import { PlantsController } from './plants/plants.controller';
 import { PlantsService } from './plants/plants.service';
 import { Plant, PlantSchema } from './plants/schemas/plant.schema';
+import { RedisProvider } from './redis.provider';
 
 @Module({
   imports: [
     ServeStaticModule.forRoot({
-      rootPath: join(process.cwd(), 'apps', 'plant-service', 'public'),
+      rootPath: join(process.cwd(), 'dist', 'apps', 'plant-service', 'public'),
       serveRoot: '/',
     }),
     ConfigModule.forRoot({ isGlobal: true }),
@@ -27,6 +28,6 @@ import { Plant, PlantSchema } from './plants/schemas/plant.schema';
     MongooseModule.forFeature([{ name: Plant.name, schema: PlantSchema }]),
   ],
   controllers: [PlantsController],
-  providers: [PlantsService],
+  providers: [PlantsService, RedisProvider],
 })
 export class PlantServiceModule {}

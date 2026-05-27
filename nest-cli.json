@@ -34,7 +34,8 @@
       "entryFile": "main",
       "sourceRoot": "apps/plant-service/src",
       "compilerOptions": {
-        "tsConfigPath": "apps/plant-service/tsconfig.app.json"
+        "tsConfigPath": "apps/plant-service/tsconfig.app.json",
+        "assets": [{ "include": "public/**/*", "watchAssets": true }]
       }
     },
     "compatibility-service": {

@@ -11,6 +11,7 @@ import {
   UseGuards,
 } from '@nestjs/common';
 import { HttpService } from '@nestjs/axios';
+import { ConfigService } from '@nestjs/config';
 import { firstValueFrom } from 'rxjs';
 import { AxiosError } from 'axios';
 import { JwtAuthGuard } from '../guards/jwt-auth.guard';
@@ -21,12 +22,20 @@ import type {
   UserProfile,
 } from './users.types';
 
-const USER_SVC = 'http://localhost:3002/users';
-
 @UseGuards(JwtAuthGuard)
 @Controller('users')
 export class UsersController {
-  constructor(private readonly httpService: HttpService) {}
+  private readonly userSvcUrl: string;
+
+  constructor(
+    private readonly httpService: HttpService,
+    private readonly config: ConfigService,
+  ) {
+    this.userSvcUrl = this.config.get<string>(
+      'USER_SERVICE_URL',
+      'http://localhost:3002/users',
+    );
+  }
 
   private headers(req: RequestWithUser): Record<string, string> {
     return { 'x-user-id': String(req.user.sub) };
@@ -44,7 +53,7 @@ export class UsersController {
   async getProfile(@Req() req: RequestWithUser): Promise<UserProfile> {
     try {
       const res = await firstValueFrom(
-        this.httpService.get<UserProfile>(`${USER_SVC}/profile`, {
+        this.httpService.get<UserProfile>(`${this.userSvcUrl}/profile`, {
           headers: this.headers(req),
         }),
       );
@@ -61,9 +70,13 @@ export class UsersController {
   ): Promise<UserProfile> {
     try {
       const res = await firstValueFrom(
-        this.httpService.patch<UserProfile>(`${USER_SVC}/profile`, body, {
-          headers: this.headers(req),
-        }),
+        this.httpService.patch<UserProfile>(
+          `${this.userSvcUrl}/profile`,
+          body,
+          {
+            headers: this.headers(req),
+          },
+        ),
       );
       return res.data;
     } catch (err) {
@@ -75,7 +88,7 @@ export class UsersController {
   async deleteProfile(@Req() req: RequestWithUser): Promise<DeleteResult> {
     try {
       const res = await firstValueFrom(
-        this.httpService.delete<DeleteResult>(`${USER_SVC}/profile`, {
+        this.httpService.delete<DeleteResult>(`${this.userSvcUrl}/profile`, {
           headers: this.headers(req),
         }),
       );
@@ -93,7 +106,7 @@ export class UsersController {
     try {
       await firstValueFrom(
         this.httpService.post(
-          `${USER_SVC}/notifications/send-verification`,
+          `${this.userSvcUrl}/notifications/send-verification`,
           body,
           { headers: this.headers(req) },
         ),
@@ -110,9 +123,13 @@ export class UsersController {
   ): Promise<void> {
     try {
       await firstValueFrom(
-        this.httpService.post(`${USER_SVC}/notifications/verify-code`, body, {
-          headers: this.headers(req),
-        }),
+        this.httpService.post(
+          `${this.userSvcUrl}/notifications/verify-code`,
+          body,
+          {
+            headers: this.headers(req),
+          },
+        ),
       );
     } catch (err) {
       this.handleError(err);
@@ -126,7 +143,7 @@ export class UsersController {
     try {
       const res = await firstValueFrom(
         this.httpService.get<GardenNotificationSettings[]>(
-          `${USER_SVC}/notifications/garden-settings`,
+          `${this.userSvcUrl}/notifications/garden-settings`,
           { headers: this.headers(req) },
         ),
       );
@@ -144,7 +161,7 @@ export class UsersController {
     try {
       const res = await firstValueFrom(
         this.httpService.get<GardenNotificationSettings>(
-          `${USER_SVC}/notifications/garden-settings/${gardenId}`,
+          `${this.userSvcUrl}/notifications/garden-settings/${gardenId}`,
           { headers: this.headers(req) },
         ),
       );
@@ -164,7 +181,7 @@ export class UsersController {
     try {
       const res = await firstValueFrom(
         this.httpService.patch<GardenNotificationSettings>(
-          `${USER_SVC}/notifications/garden-settings/${gardenId}`,
+          `${this.userSvcUrl}/notifications/garden-settings/${gardenId}`,
           body,
           { headers: this.headers(req) },
         ),
@@ -193,7 +210,7 @@ export class UsersController {
           previewUrl: string | null;
           targetDate: string;
         }>(
-          `${USER_SVC}/notifications/trigger-test/${gardenId}`,
+          `${this.userSvcUrl}/notifications/trigger-test/${gardenId}`,
           {},
           { headers: this.headers(req) },
         ),

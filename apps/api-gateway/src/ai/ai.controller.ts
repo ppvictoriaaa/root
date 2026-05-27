@@ -1,12 +1,11 @@
 import { Body, Controller, Post, Req, UseGuards } from '@nestjs/common';
 import { HttpService } from '@nestjs/axios';
+import { ConfigService } from '@nestjs/config';
 import { firstValueFrom } from 'rxjs';
 import { AxiosError } from 'axios';
 import { HttpException } from '@nestjs/common';
 import { JwtAuthGuard } from '../guards/jwt-auth.guard';
 import type { RequestWithUser } from '../users/users.types';
-
-const AI_SVC = 'http://localhost:3008/ai';
 
 interface ChatMessage {
   role: 'user' | 'assistant';
@@ -16,7 +15,17 @@ interface ChatMessage {
 @UseGuards(JwtAuthGuard)
 @Controller('ai')
 export class AiController {
-  constructor(private readonly httpService: HttpService) {}
+  private readonly aiServiceUrl: string;
+
+  constructor(
+    private readonly httpService: HttpService,
+    private readonly config: ConfigService,
+  ) {
+    this.aiServiceUrl = this.config.get<string>(
+      'AI_SERVICE_URL',
+      'http://localhost:3008/ai',
+    );
+  }
 
   @Post('chat')
   async chat(
@@ -26,9 +35,11 @@ export class AiController {
   ): Promise<{ reply: string }> {
     try {
       const res = await firstValueFrom(
-        this.httpService.post<{ reply: string }>(`${AI_SVC}/chat`, body, {
-          headers: { 'x-user-id': String(req.user.sub) },
-        }),
+        this.httpService.post<{ reply: string }>(
+          `${this.aiServiceUrl}/chat`,
+          body,
+          { headers: { 'x-user-id': String(req.user.sub) } },
+        ),
       );
       return res.data;
     } catch (err) {
