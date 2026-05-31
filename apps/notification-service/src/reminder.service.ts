@@ -94,7 +94,7 @@ export class ReminderService implements OnModuleInit {
 
     // Atomically claim this send slot — prevents duplicate emails in multi-instance setups
     try {
-      const claimed = await this.redis.set(dedupeKey, '1', 'NX', 'EX', 25 * 60 * 60);
+      const claimed = await this.redis.set(dedupeKey, '1', 'EX', 25 * 60 * 60, 'NX');
       if (!claimed) {
         return { sent: false, eventsCount: 0, previewUrl: null, targetDate: dateStr };
       }

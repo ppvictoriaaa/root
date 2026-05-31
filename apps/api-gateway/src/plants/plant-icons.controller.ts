@@ -31,7 +31,7 @@ export class PlantIconsController {
       );
       const contentType = (response.headers['content-type'] as string) ?? 'image/svg+xml';
       res.setHeader('Content-Type', contentType);
-      res.setHeader('Cache-Control', 'public, max-age=86400');
+      res.setHeader('Cache-Control', 'no-store');
       (response.data as NodeJS.ReadableStream).pipe(res);
     } catch {
       res.status(HttpStatus.NOT_FOUND).end();

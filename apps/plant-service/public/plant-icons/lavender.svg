@@ -1,0 +1,97 @@
+<svg width="220" height="260" viewBox="0 0 220 260" xmlns="http://www.w3.org/2000/svg">
+
+  <!-- stems -->
+  <g stroke="#5C7F48" stroke-width="3.5" stroke-linecap="round" fill="none">
+
+    <!-- main stem -->
+    <path d="M110 235 L110 150"/>
+
+    <!-- flower stems -->
+    <path d="M110 150 L110 18"/>
+
+    <path d="M88 135 L88 18"/>
+    <path d="M132 135 L132 18"/>
+
+    <path d="M68 150 L68 18"/>
+    <path d="M152 150 L152 18"/>
+
+
+    <!-- branches -->
+    <path d="M110 185 L88 135"/>
+    <path d="M110 185 L132 135"/>
+
+    <path d="M110 200 L68 150"/>
+    <path d="M110 200 L152 150"/>
+
+
+  </g>
+
+  <!-- lavender flowers -->
+  <g fill="#8F5BFF">
+
+    <!-- center -->
+    <ellipse cx="110" cy="18" rx="5" ry="7"/>
+    <ellipse cx="110" cy="30" rx="6" ry="8"/>
+    <ellipse cx="110" cy="42" rx="7" ry="9"/>
+    <ellipse cx="110" cy="54" rx="8" ry="10"/>
+    <ellipse cx="110" cy="66" rx="9" ry="11"/>
+    <ellipse cx="110" cy="78" rx="9" ry="11"/>
+    <ellipse cx="110" cy="90" rx="8" ry="10"/>
+    <ellipse cx="110" cy="102" rx="7" ry="9"/>
+    <ellipse cx="110" cy="114" rx="6" ry="8"/>
+
+    <!-- left -->
+    <ellipse cx="88" cy="18" rx="5" ry="7"/>
+    <ellipse cx="88" cy="30" rx="6" ry="8"/>
+    <ellipse cx="88" cy="42" rx="7" ry="9"/>
+    <ellipse cx="88" cy="54" rx="8" ry="10"/>
+    <ellipse cx="88" cy="66" rx="9" ry="11"/>
+    <ellipse cx="88" cy="78" rx="9" ry="11"/>
+    <ellipse cx="88" cy="90" rx="8" ry="10"/>
+    <ellipse cx="88" cy="102" rx="7" ry="9"/>
+    <ellipse cx="88" cy="114" rx="6" ry="8"/>
+
+    <!-- right -->
+    <ellipse cx="132" cy="18" rx="5" ry="7"/>
+    <ellipse cx="132" cy="30" rx="6" ry="8"/>
+    <ellipse cx="132" cy="42" rx="7" ry="9"/>
+    <ellipse cx="132" cy="54" rx="8" ry="10"/>
+    <ellipse cx="132" cy="66" rx="9" ry="11"/>
+    <ellipse cx="132" cy="78" rx="9" ry="11"/>
+    <ellipse cx="132" cy="90" rx="8" ry="10"/>
+    <ellipse cx="132" cy="102" rx="7" ry="9"/>
+    <ellipse cx="132" cy="114" rx="6" ry="8"/>
+
+    <!-- far left -->
+    <ellipse cx="68" cy="18" rx="5" ry="7"/>
+    <ellipse cx="68" cy="30" rx="6" ry="8"/>
+    <ellipse cx="68" cy="42" rx="7" ry="9"/>
+    <ellipse cx="68" cy="54" rx="8" ry="10"/>
+    <ellipse cx="68" cy="66" rx="9" ry="11"/>
+    <ellipse cx="68" cy="78" rx="9" ry="11"/>
+    <ellipse cx="68" cy="90" rx="8" ry="10"/>
+    <ellipse cx="68" cy="102" rx="7" ry="9"/>
+    <ellipse cx="68" cy="114" rx="6" ry="8"/>
+
+    <!-- far right -->
+    <ellipse cx="152" cy="18" rx="5" ry="7"/>
+    <ellipse cx="152" cy="30" rx="6" ry="8"/>
+    <ellipse cx="152" cy="42" rx="7" ry="9"/>
+    <ellipse cx="152" cy="54" rx="8" ry="10"/>
+    <ellipse cx="152" cy="66" rx="9" ry="11"/>
+    <ellipse cx="152" cy="78" rx="9" ry="11"/>
+    <ellipse cx="152" cy="90" rx="8" ry="10"/>
+    <ellipse cx="152" cy="102" rx="7" ry="9"/>
+    <ellipse cx="152" cy="114" rx="6" ry="8"/>
+
+  </g>
+
+  <!-- highlights -->
+  <g fill="#D8C4FF" opacity="0.7">
+    <circle cx="108" cy="30" r="2"/>
+    <circle cx="86" cy="30" r="2"/>
+    <circle cx="130" cy="30" r="2"/>
+    <circle cx="66" cy="30" r="2"/>
+    <circle cx="150" cy="30" r="2"/>
+  </g>
+</svg>

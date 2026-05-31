@@ -1,0 +1,55 @@
+<svg width="220" height="220" viewBox="0 0 220 220" xmlns="http://www.w3.org/2000/svg">
+
+  <!-- stems -->
+  <g stroke="#4F8A3A" stroke-width="5" stroke-linecap="round" fill="none">
+    <path d="M110 195 L110 120"/>
+    <path d="M110 150 L70 92"/>
+    <path d="M110 150 L150 92"/>
+    <path d="M110 135 L110 55"/>
+  </g>
+
+  <!-- left parsley leaf -->
+  <path
+    d="
+      M70 95
+      L52 88 L60 78 L45 72 L58 64
+      L50 52 L66 54 L70 40 L80 54
+      L94 46 L92 62 L106 66 L94 76
+      L102 90 L86 88 L82 104
+      Z"
+    fill="#67BC4A"/>
+
+  <!-- right parsley leaf -->
+  <path
+    d="
+      M150 95
+      L132 88 L140 78 L125 72 L138 64
+      L130 52 L146 54 L150 40 L160 54
+      L174 46 L172 62 L186 66 L174 76
+      L182 90 L166 88 L162 104
+      Z"
+    fill="#67BC4A"/>
+
+  <!-- top parsley leaf -->
+  <path
+    d="
+      M110 65
+      L92 57 L100 47 L84 41 L98 33
+      L92 19 L106 25 L110 8 L116 25
+      L130 19 L122 33 L136 41 L120 47
+      L128 57 L110 65
+      Z"
+    fill="#7AD75A"/>
+
+  <!-- center leaf -->
+  <path
+    d="
+      M110 125
+      L92 116 L100 106 L84 100 L98 92
+      L92 78 L106 84 L110 68 L116 84
+      L130 78 L122 92 L136 100 L120 106
+      L128 116 L110 125
+      Z"
+    fill="#73CF55"/>
+
+</svg>

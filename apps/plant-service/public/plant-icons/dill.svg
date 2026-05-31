@@ -1,0 +1,82 @@
+<svg width="220" height="260" viewBox="0 0 220 260" xmlns="http://www.w3.org/2000/svg">
+  <rect width="220" height="260" fill="transparent"/>
+
+  <!-- stem -->
+  <path d="M110 235 C108 190, 112 145, 110 95"
+        stroke="#4f7d3a"
+        stroke-width="5"
+        fill="none"
+        stroke-linecap="round"/>
+
+  <!-- side stems -->
+  <path d="M110 160 C82 145, 62 125, 48 98"
+        stroke="#5d8f42"
+        stroke-width="3"
+        fill="none"
+        stroke-linecap="round"/>
+
+  <path d="M110 145 C138 130, 158 108, 174 82"
+        stroke="#5d8f42"
+        stroke-width="3"
+        fill="none"
+        stroke-linecap="round"/>
+
+  <path d="M110 120 C88 105, 73 86, 62 62"
+        stroke="#5d8f42"
+        stroke-width="3"
+        fill="none"
+        stroke-linecap="round"/>
+
+  <path d="M110 112 C132 95, 148 74, 160 48"
+        stroke="#5d8f42"
+        stroke-width="3"
+        fill="none"
+        stroke-linecap="round"/>
+
+  <!-- dill umbrella top -->
+  <g stroke="#6fa94f" stroke-width="2" stroke-linecap="round">
+    <path d="M110 95 L75 55"/>
+    <path d="M110 95 L92 44"/>
+    <path d="M110 95 L110 36"/>
+    <path d="M110 95 L130 44"/>
+    <path d="M110 95 L146 56"/>
+  </g>
+
+  <!-- fluffy dill leaves -->
+  <g stroke="#7fbd5a" stroke-width="2" stroke-linecap="round">
+
+    <!-- left lower -->
+    <path d="M48 98 L35 88 M48 98 L32 102 M48 98 L40 114"/>
+    <path d="M52 104 L40 96 M52 104 L37 106 M52 104 L45 118"/>
+    <path d="M58 110 L47 102 M58 110 L45 112 M58 110 L50 123"/>
+
+    <!-- right lower -->
+    <path d="M174 82 L190 72 M174 82 L192 86 M174 82 L184 98"/>
+    <path d="M168 88 L182 78 M168 88 L186 90 M168 88 L178 102"/>
+    <path d="M162 94 L176 84 M162 94 L180 96 M162 94 L170 108"/>
+
+    <!-- left upper -->
+    <path d="M62 62 L48 50 M62 62 L44 65 M62 62 L55 78"/>
+    <path d="M68 68 L55 58 M68 68 L50 70 M68 68 L60 84"/>
+    <path d="M74 74 L62 64 M74 74 L58 76 M74 74 L66 90"/>
+
+    <!-- right upper -->
+    <path d="M160 48 L174 35 M160 48 L180 50 M160 48 L168 65"/>
+    <path d="M154 54 L168 42 M154 54 L174 56 M154 54 L162 70"/>
+    <path d="M148 60 L162 48 M148 60 L168 62 M148 60 L156 76"/>
+
+    <!-- extra fluff near center -->
+    <path d="M100 145 L90 138 M100 145 L88 148 M100 145 L92 156"/>
+    <path d="M120 138 L132 130 M120 138 L135 140 M120 138 L128 150"/>
+
+  </g>
+
+  <!-- flower heads -->
+  <g fill="#8bcf63">
+    <circle cx="75" cy="55" r="4"/>
+    <circle cx="92" cy="44" r="4"/>
+    <circle cx="110" cy="36" r="4"/>
+    <circle cx="130" cy="44" r="4"/>
+    <circle cx="146" cy="56" r="4"/>
+  </g>
+</svg>

@@ -1,0 +1,33 @@
+<svg width="220" height="220" viewBox="0 0 220 220" xmlns="http://www.w3.org/2000/svg">
+
+  <!-- mint leaf -->
+  <path
+    d="M110 190
+       C65 170 35 120 50 70
+       C62 25 95 10 110 35
+       C125 10 158 25 170 70
+       C185 120 155 170 110 190Z"
+    fill="#7ED957"/>
+
+  <!-- center vein -->
+  <path
+    d="M110 180 L110 35"
+    stroke="#4CAF50"
+    stroke-width="8"
+    stroke-linecap="round"/>
+
+  <!-- left veins -->
+  <path d="M110 60 L82 42" stroke="#4CAF50" stroke-width="4" stroke-linecap="round"/>
+  <path d="M110 85 L75 68" stroke="#4CAF50" stroke-width="4" stroke-linecap="round"/>
+  <path d="M110 110 L70 98" stroke="#4CAF50" stroke-width="4" stroke-linecap="round"/>
+  <path d="M110 135 L72 132" stroke="#4CAF50" stroke-width="4" stroke-linecap="round"/>
+  <path d="M110 160 L82 168" stroke="#4CAF50" stroke-width="4" stroke-linecap="round"/>
+
+  <!-- right veins -->
+  <path d="M110 60 L138 42" stroke="#4CAF50" stroke-width="4" stroke-linecap="round"/>
+  <path d="M110 85 L145 68" stroke="#4CAF50" stroke-width="4" stroke-linecap="round"/>
+  <path d="M110 110 L150 98" stroke="#4CAF50" stroke-width="4" stroke-linecap="round"/>
+  <path d="M110 135 L148 132" stroke="#4CAF50" stroke-width="4" stroke-linecap="round"/>
+  <path d="M110 160 L138 168" stroke="#4CAF50" stroke-width="4" stroke-linecap="round"/>
+
+</svg>
