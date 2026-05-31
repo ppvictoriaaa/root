@@ -1,4 +1,4 @@
-import { BadRequestException, Injectable, Logger } from '@nestjs/common';
+import { BadRequestException, Injectable, Logger, NotFoundException } from '@nestjs/common';
 import { PlantCareRulesService } from '../plant-care-rules/plant-care-rules.service';
 import { WeatherService } from '../weather/weather.service';
 import { GardenClientService } from '../garden-client/garden-client.service';
@@ -54,6 +54,7 @@ export class CalendarGenerationService {
 
     // ── 1. Fetch the garden from garden-service and validate it belongs to the user ──
     const garden = await this.gardenClient.getGardenById(dto.gardenId);
+    if (!garden) throw new NotFoundException('Garden not found');
 
     if (garden.userId !== dto.userId) {
       throw new BadRequestException('This garden does not belong to the specified user.');

@@ -1,4 +1,4 @@
-import { Injectable, Logger } from '@nestjs/common';
+import { Injectable, OnModuleInit } from '@nestjs/common';
 import { HttpService } from '@nestjs/axios';
 import { firstValueFrom } from 'rxjs';
 import Groq from 'groq-sdk';
@@ -50,11 +50,16 @@ const EVENT_ICONS: Record<string, string> = {
 };
 
 @Injectable()
-export class AiService {
-  private readonly logger = new Logger(AiService.name);
+export class AiService implements OnModuleInit {
   private readonly groq = new Groq({ apiKey: process.env.GROQ_API_KEY });
 
   constructor(private readonly httpService: HttpService) {}
+
+  onModuleInit() {
+    if (!process.env.GROQ_API_KEY) {
+      throw new Error('GROQ_API_KEY environment variable is required');
+    }
+  }
 
   async chat(
     userId: string,
@@ -64,17 +69,30 @@ export class AiService {
   ): Promise<string> {
     const systemPrompt = await this.buildSystemPrompt(userId, gardenId);
 
-    const response = await this.groq.chat.completions.create({
-      model: 'llama-3.3-70b-versatile',
-      max_tokens: 1024,
-      messages: [
-        { role: 'system', content: systemPrompt },
-        ...history,
-        { role: 'user', content: message },
-      ],
-    });
+    const controller = new AbortController();
+    const timeout = setTimeout(() => controller.abort(), 30_000);
 
-    return response.choices[0]?.message?.content ?? '';
+    let response: Awaited<ReturnType<typeof this.groq.chat.completions.create>>;
+    try {
+      response = await this.groq.chat.completions.create(
+        {
+          model: 'llama-3.3-70b-versatile',
+          max_tokens: 1024,
+          messages: [
+            { role: 'system', content: systemPrompt },
+            ...history,
+            { role: 'user', content: message },
+          ],
+        },
+        { signal: controller.signal },
+      );
+    } finally {
+      clearTimeout(timeout);
+    }
+
+    const content = response.choices[0]?.message?.content;
+    if (!content) throw new Error('Empty response from Groq API');
+    return content;
   }
 
   private async buildSystemPrompt(

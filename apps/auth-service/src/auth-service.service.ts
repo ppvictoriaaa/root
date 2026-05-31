@@ -7,6 +7,10 @@ import { User, UserDocument } from './schemas/user.schema';
 import { RegisterDto } from './dto/register.dto';
 import { LoginDto } from './dto/login.dto';
 
+// Pre-hashed constant used when user doesn't exist — keeps login timing consistent
+// and prevents timing-based user enumeration attacks.
+const DUMMY_HASH = '$2b$10$N9qo8uLOickgx2ZMRZoMyeIjZAgcfl7p92ldGxad68LJZdL17lhWy';
+
 @Injectable()
 export class AuthServiceService {
   constructor(
@@ -32,12 +36,9 @@ export class AuthServiceService {
 
   async login(dto: LoginDto) {
     const user = await this.userModel.findOne({ email: dto.email });
-    if (!user) {
-      throw new UnauthorizedException('Invalid email or password');
-    }
-
-    const isPasswordValid = await bcrypt.compare(dto.password, user.password);
-    if (!isPasswordValid) {
+    // Always run bcrypt even when user doesn't exist to prevent timing-based enumeration
+    const isPasswordValid = await bcrypt.compare(dto.password, user?.password ?? DUMMY_HASH);
+    if (!user || !isPasswordValid) {
       throw new UnauthorizedException('Invalid email or password');
     }
 

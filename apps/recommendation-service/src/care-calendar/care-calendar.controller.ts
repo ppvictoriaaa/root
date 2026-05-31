@@ -1,4 +1,4 @@
-import { Body, Controller, Delete, Get, HttpCode, HttpStatus, NotFoundException, Param, Patch, Post, Query } from '@nestjs/common';
+import { BadRequestException, Body, Controller, Delete, Get, HttpCode, HttpStatus, NotFoundException, Param, Patch, Post, Query } from '@nestjs/common';
 import { CareCalendarService } from './care-calendar.service';
 import { WeatherRefreshService } from './weather-refresh.service';
 import { GenerateCareCalendarDto } from './dto/generate-calendar.dto';
@@ -50,7 +50,12 @@ export class CareCalendarController {
     @Query('year') year: string,
     @Query('month') month: string,
   ) {
-    return this.service.getByGardenAndMonth(gardenId, Number(year), Number(month));
+    const yearNum = Number(year);
+    const monthNum = Number(month);
+    if (!year || !month || isNaN(yearNum) || isNaN(monthNum) || monthNum < 1 || monthNum > 12) {
+      throw new BadRequestException('Valid year and month (1–12) query parameters are required');
+    }
+    return this.service.getByGardenAndMonth(gardenId, yearNum, monthNum);
   }
 
   @Get(':gardenId')

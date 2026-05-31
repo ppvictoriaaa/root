@@ -84,14 +84,6 @@ export class ReminderService implements OnModuleInit {
     const dateStr = `${target.getFullYear()}-${String(target.getMonth() + 1).padStart(2, '0')}-${String(target.getDate()).padStart(2, '0')}`;
 
     const dedupeKey = `reminder:sent:${userId}:${gardenId}:${dateStr}`;
-    try {
-      const alreadySent = await this.redis.get(dedupeKey);
-      if (alreadySent) {
-        return { sent: false, eventsCount: 0, previewUrl: null, targetDate: dateStr };
-      }
-    } catch {
-      // Redis unavailable — skip deduplication check
-    }
 
     const events = await this.fetchEvents(userId, dateStr, gardenId);
     if (events.length === 0) {
@@ -99,13 +91,18 @@ export class ReminderService implements OnModuleInit {
     }
 
     const gardenName = await this.fetchGardenName(userId, gardenId);
-    const previewUrl = await this.sendEmail(settings.notificationEmail, dateStr, gardenName, events);
 
+    // Atomically claim this send slot — prevents duplicate emails in multi-instance setups
     try {
-      await this.redis.set(dedupeKey, '1', 'EX', 25 * 60 * 60); // 25 hours
+      const claimed = await this.redis.set(dedupeKey, '1', 'NX', 'EX', 25 * 60 * 60);
+      if (!claimed) {
+        return { sent: false, eventsCount: 0, previewUrl: null, targetDate: dateStr };
+      }
     } catch {
-      // Redis unavailable — skip deduplication record
+      // Redis unavailable — proceed without deduplication
     }
+
+    const previewUrl = await this.sendEmail(settings.notificationEmail, dateStr, gardenName, events);
 
     return { sent: true, eventsCount: events.length, previewUrl, targetDate: dateStr };
   }
@@ -207,7 +204,9 @@ export class ReminderService implements OnModuleInit {
 
     const text = `Garden Care Reminder\n\nTasks for ${dateLabel} in "${gardenName}":\n${events.map((e) => `- ${e.title}`).join('\n')}`;
 
-    const info = await this.transporter!.sendMail({
+    if (!this.transporter) throw new Error('Email transporter is not initialized');
+
+    const info = await this.transporter.sendMail({
       from: process.env.SMTP_FROM ?? '"Garden Planner" <noreply@garden.app>',
       to,
       subject,

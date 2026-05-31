@@ -69,11 +69,13 @@ export class NotificationsService implements OnModuleInit {
   // ─── Email verification ───────────────────────────────────────────────────
 
   async sendVerification(userId: string, email: string): Promise<void> {
+    if (!this.transporter) throw new Error('Email transporter is not initialized');
+
     const code = Math.floor(10000 + Math.random() * 90000).toString();
     await this.verificationModel.deleteMany({ userId });
     await this.verificationModel.create({ userId, email, code });
 
-    const info = (await this.transporter!.sendMail({
+    const info = (await this.transporter.sendMail({
       from: process.env.SMTP_FROM ?? '"Garden Planner" <noreply@garden.app>',
       to: email,
       subject: 'Garden Planner — your verification code',

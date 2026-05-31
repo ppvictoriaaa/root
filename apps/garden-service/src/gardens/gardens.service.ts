@@ -29,19 +29,24 @@ export class GardensService {
   }
 
   async update(id: string, userId: string, dto: SaveGardenDto) {
-    const garden = await this.gardenModel.findById(id);
-    if (!garden) throw new NotFoundException('Garden not found');
-    if (garden.userId !== userId) throw new ForbiddenException();
-    return this.gardenModel
-      .findByIdAndUpdate(id, { $set: dto }, { returnDocument: 'after' })
+    const updated = await this.gardenModel
+      .findOneAndUpdate({ _id: id, userId }, { $set: dto }, { new: true })
       .lean();
+    if (!updated) {
+      const exists = await this.gardenModel.exists({ _id: id });
+      if (!exists) throw new NotFoundException('Garden not found');
+      throw new ForbiddenException();
+    }
+    return updated;
   }
 
   async remove(id: string, userId: string) {
-    const garden = await this.gardenModel.findById(id);
-    if (!garden) throw new NotFoundException('Garden not found');
-    if (garden.userId !== userId) throw new ForbiddenException();
-    await this.gardenModel.findByIdAndDelete(id);
+    const deleted = await this.gardenModel.findOneAndDelete({ _id: id, userId });
+    if (!deleted) {
+      const exists = await this.gardenModel.exists({ _id: id });
+      if (!exists) throw new NotFoundException('Garden not found');
+      throw new ForbiddenException();
+    }
     return { message: 'Garden deleted' };
   }
 }
