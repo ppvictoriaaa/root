@@ -8,10 +8,7 @@ import { generateWateringEvents, WateringEvent } from './calculators/watering-ca
 import { generateFertilizingEvents } from './calculators/fertilizing-calculator';
 import { generateHarvestEvent } from './calculators/harvest-calculator';
 import { WeatherForecastDay } from '../weather/interfaces/weather-forecast.interface';
-import { CareTaskType } from '../common/enums/care-task-type.enum';
-import { addDays, addMonths, toDateString, clampDate } from '../common/utils/date.utils';
-import { PlantCategory } from '../common/enums/plant-category.enum';
-import { VarietyType } from '../common/enums/variety-type.enum';
+import { CareTaskType, addDays, addMonths, toDateString, clampDate, PlantCategory, VarietyType } from '@garden/shared';
 
 type AnyEvent = {
   userId: string;

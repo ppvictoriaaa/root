@@ -14,6 +14,8 @@ export class ReminderScheduler {
     const currentTime = `${String(now.getHours()).padStart(2, '0')}:${String(now.getMinutes()).padStart(2, '0')}`;
     await this.reminderService
       .sendScheduled(currentTime)
-      .catch((err: Error) => this.logger.error(`Scheduler error: ${err.message}`));
+      .catch((err: Error) =>
+        this.logger.error(`Scheduler error: ${err.message}`),
+      );
   }
 }

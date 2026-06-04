@@ -6,8 +6,7 @@ import { CareCalendarEvent, CareCalendarEventDocument } from './schemas/care-cal
 import { CareCalendarMeta, CareCalendarMetaDocument } from './schemas/care-calendar-meta.schema';
 import { WeatherService } from '../weather/weather.service';
 import { WeatherForecastDay } from '../weather/interfaces/weather-forecast.interface';
-import { CareTaskType } from '../common/enums/care-task-type.enum';
-import { addDays, clampDate, toDateString } from '../common/utils/date.utils';
+import { CareTaskType, addDays, clampDate, toDateString } from '@garden/shared';
 
 const HEAVY_RAIN_LOOKBACK_MM = 15; // cumulative rain over last 7 days → skip watering
 const RAIN_LOOKAHEAD_MM      = 5;  // rain forecast in next 3 days → defer watering

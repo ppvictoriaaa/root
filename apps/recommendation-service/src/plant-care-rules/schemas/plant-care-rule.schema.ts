@@ -1,5 +1,6 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import { Document } from 'mongoose';
+import { VarietyType } from '@garden/shared';
 
 export type PlantCareRuleDocument = PlantCareRule & Document;
 
@@ -42,7 +43,7 @@ export class PlantCareRule {
   @Prop({ required: true, unique: true, index: true }) plantSlug!: string;
   @Prop({ required: true, type: String }) category!: string;
   @Prop({ required: true, default: false }) supportsVarieties!: boolean;
-  @Prop({ required: true, type: String, default: 'none' }) varietyType!: string;
+  @Prop({ required: true, type: String, enum: VarietyType, default: VarietyType.None }) varietyType!: VarietyType;
   @Prop({ type: [String], default: [] }) allowedVarieties!: string[];
   @Prop({ type: GrowthConfigSchema, default: {} }) growth!: GrowthConfig;
   @Prop({ type: WateringConfigSchema, required: true }) watering!: WateringConfig;

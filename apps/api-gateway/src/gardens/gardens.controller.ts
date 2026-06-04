@@ -15,7 +15,8 @@ import { ConfigService } from '@nestjs/config';
 import { firstValueFrom } from 'rxjs';
 import { AxiosError } from 'axios';
 import { JwtAuthGuard } from '../guards/jwt-auth.guard';
-import type { Garden, RequestWithUser } from './gardens.types';
+import type { Garden } from './gardens.types';
+import type { RequestWithUser } from '../users/users.types';
 
 @UseGuards(JwtAuthGuard)
 @Controller('gardens')

@@ -3,8 +3,7 @@
  * Values are simplified for a diploma project and should be refined
  * with agronomic sources before production use.
  */
-import { PlantCategory } from '../../common/enums/plant-category.enum';
-import { VarietyType } from '../../common/enums/variety-type.enum';
+import { PlantCategory, VarietyType } from '@garden/shared';
 
 export const plantCareRulesSeed = [
   // ── VEGETABLES ────────────────────────────────────────────────────────────

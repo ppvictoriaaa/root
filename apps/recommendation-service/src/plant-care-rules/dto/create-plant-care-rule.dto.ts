@@ -8,8 +8,7 @@ import {
   IsString,
   ValidateNested,
 } from 'class-validator';
-import { PlantCategory } from '../../common/enums/plant-category.enum';
-import { VarietyType } from '../../common/enums/variety-type.enum';
+import { PlantCategory, VarietyType } from '@garden/shared';
 
 class GrowthConfigDto {
   @IsOptional() @IsNumber() normalDaysToHarvest?: number;

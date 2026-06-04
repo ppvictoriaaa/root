@@ -7,6 +7,13 @@ import {
 import { JwtService } from '@nestjs/jwt';
 import { Request } from 'express';
 
+interface JwtPayload {
+  sub: string;
+  email: string;
+  iat?: number;
+  exp?: number;
+}
+
 @Injectable()
 export class JwtAuthGuard implements CanActivate {
   constructor(private jwtService: JwtService) {}
@@ -16,17 +23,17 @@ export class JwtAuthGuard implements CanActivate {
     const token = this.extractToken(request);
 
     if (!token) {
-      throw new UnauthorizedException('Токен відсутній');
+      throw new UnauthorizedException('Token missing');
     }
 
     try {
-      const payload = this.jwtService.verify(token, {
-        secret: process.env.JWT_SECRET || 'secret',
+      const payload = this.jwtService.verify<JwtPayload>(token, {
+        secret: process.env['JWT_SECRET'] ?? 'secret',
       });
       request['user'] = payload;
       return true;
     } catch {
-      throw new UnauthorizedException('Токен невалідний або застарів');
+      throw new UnauthorizedException('Token invalid or expired');
     }
   }
 

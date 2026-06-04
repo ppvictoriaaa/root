@@ -6,7 +6,7 @@ import { ConfigModule, ConfigService } from '@nestjs/config';
 import { PlantsController } from './plants/plants.controller';
 import { PlantsService } from './plants/plants.service';
 import { Plant, PlantSchema } from './plants/schemas/plant.schema';
-import { RedisProvider } from './redis.provider';
+import { RedisProvider } from '@garden/shared';
 
 @Module({
   imports: [

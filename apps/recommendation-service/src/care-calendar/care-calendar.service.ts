@@ -7,8 +7,7 @@ import { GenerateCareCalendarDto } from './dto/generate-calendar.dto';
 import { CalendarEventResponseDto, GenerateCalendarResponseDto } from './dto/calendar-event-response.dto';
 import { CalendarGenerationService } from '../calendar-generation/calendar-generation.service';
 import { WeatherRefreshService } from './weather-refresh.service';
-import { CalendarEventStatus } from '../common/enums/calendar-event-status.enum';
-import { toDateString } from '../common/utils/date.utils';
+import { CalendarEventStatus, toDateString } from '@garden/shared';
 
 @Injectable()
 export class CareCalendarService {

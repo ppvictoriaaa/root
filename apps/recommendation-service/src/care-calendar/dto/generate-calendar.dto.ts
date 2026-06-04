@@ -1,6 +1,6 @@
 import { Type } from 'class-transformer';
 import { IsEnum, IsNumber, IsOptional, IsString, Max, Min, ValidateNested } from 'class-validator';
-import { SoilType } from '../../common/enums/soil-type.enum';
+import { SoilType } from '@garden/shared';
 
 class LocationDto {
   @IsNumber() latitude!: number;

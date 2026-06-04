@@ -1,7 +1,6 @@
 import { IsArray, IsBoolean, IsEnum, IsNumber, IsOptional, IsString, ValidateNested } from 'class-validator';
 import { Type } from 'class-transformer';
-import { PlantCategory } from '../../common/enums/plant-category.enum';
-import { VarietyType } from '../../common/enums/variety-type.enum';
+import { PlantCategory, VarietyType } from '@garden/shared';
 
 class GrowthConfigUpdateDto {
   @IsOptional() @IsNumber() normalDaysToHarvest?: number;

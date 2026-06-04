@@ -1,5 +1,3 @@
-import { Request } from 'express';
-
 export interface PlacedPlantItem {
   id: string;
   plantId: string;
@@ -23,8 +21,4 @@ export interface Garden {
   plotWidthM: number;
   plotHeightM: number;
   metersPerCell: number;
-}
-
-export interface RequestWithUser extends Request {
-  user: { sub: string; email: string };
 }

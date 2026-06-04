@@ -1,5 +1,4 @@
-import { addDays } from '../../common/utils/date.utils';
-import { CareTaskType } from '../../common/enums/care-task-type.enum';
+import { addDays, CareTaskType } from '@garden/shared';
 
 interface HarvestRule {
   plantSlug: string;

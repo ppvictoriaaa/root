@@ -6,7 +6,7 @@ import { ScheduleModule } from '@nestjs/schedule';
 import { ReminderService } from './reminder.service';
 import { ReminderScheduler } from './reminder.scheduler';
 import { ReminderController } from './reminder.controller';
-import { RedisProvider } from './redis.provider';
+import { RedisProvider } from '@garden/shared';
 import {
   GardenNotificationSettings,
   GardenNotificationSettingsSchema,

@@ -5,7 +5,7 @@ import { firstValueFrom } from 'rxjs';
 import { Model } from 'mongoose';
 import * as nodemailer from 'nodemailer';
 import type Redis from 'ioredis';
-import { REDIS_CLIENT } from './redis.provider';
+import { REDIS_CLIENT } from '@garden/shared';
 import {
   GardenNotificationSettings,
   GardenNotificationSettingsDocument,

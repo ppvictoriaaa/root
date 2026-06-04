@@ -1,4 +1,4 @@
-import { VarietyType } from '../../common/enums/variety-type.enum';
+import { VarietyType } from '@garden/shared';
 
 interface GrowthRule {
   growth: {

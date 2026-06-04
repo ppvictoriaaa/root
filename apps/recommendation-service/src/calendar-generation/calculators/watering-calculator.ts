@@ -1,7 +1,4 @@
-import { addDays } from '../../common/utils/date.utils';
-import { CareTaskType } from '../../common/enums/care-task-type.enum';
-import { SoilType } from '../../common/enums/soil-type.enum';
-import { VarietyType } from '../../common/enums/variety-type.enum';
+import { addDays, CareTaskType, SoilType, VarietyType } from '@garden/shared';
 
 interface WateringRule {
   plantSlug: string;
@@ -10,7 +7,7 @@ interface WateringRule {
     baseIntervalDays?: number;
     waterNeed?: 'low' | 'medium' | 'high';
   };
-  varietyType: string;
+  varietyType: VarietyType;
 }
 
 const SOIL_COEFFICIENTS: Record<string, number> = {
@@ -60,7 +57,8 @@ export function calculateWateringInterval(
 ): number {
   const base = rule.watering.baseIntervalDays ?? 7;
   const soil = SOIL_COEFFICIENTS[soilType ?? SoilType.Loamy] ?? 1.0;
-  const need = WATER_NEED_COEFFICIENTS[rule.watering.waterNeed ?? 'medium'] ?? 1.0;
+  const need =
+    WATER_NEED_COEFFICIENTS[rule.watering.waterNeed ?? 'medium'] ?? 1.0;
 
   let variety = 1.0;
   if (selectedVariety) {
@@ -87,7 +85,11 @@ export function generateWateringEvents(
 ): WateringEvent[] {
   if (!rule.watering.enabled) return [];
 
-  const intervalDays = calculateWateringInterval(rule, soilType, selectedVariety);
+  const intervalDays = calculateWateringInterval(
+    rule,
+    soilType,
+    selectedVariety,
+  );
   const events: WateringEvent[] = [];
 
   // First watering is on the interval day after planting

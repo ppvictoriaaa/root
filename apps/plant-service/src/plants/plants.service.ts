@@ -3,10 +3,10 @@ import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
 import type Redis from 'ioredis';
 import { Plant, PlantDocument } from './schemas/plant.schema';
-import { REDIS_CLIENT } from '../redis.provider';
+import { REDIS_CLIENT } from '@garden/shared';
 
 const CACHE_KEY = 'plants:all';
-const CACHE_TTL = 60 * 60; // 1 hour
+const CACHE_TTL = 60 * 60;
 
 @Injectable()
 export class PlantsService {
