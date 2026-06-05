@@ -1,6 +1,7 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { UserServiceController } from './user-service.controller';
 import { UserServiceService } from './user-service.service';
+import { NotificationsService } from './notifications.service';
 import { getModelToken } from '@nestjs/mongoose';
 import { UserProfile } from './schemas/user-profile.schema';
 
@@ -13,6 +14,7 @@ describe('UserServiceController', () => {
       providers: [
         UserServiceService,
         { provide: getModelToken(UserProfile.name), useValue: {} },
+        { provide: NotificationsService, useValue: {} },
       ],
     }).compile();
 
